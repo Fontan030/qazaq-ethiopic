@@ -1,0 +1,70 @@
+<!DOCTYPE html>
+<html lang="kk">
+<head>
+  <meta charset="UTF-8">
+  <title>Qazaq Latyn</title>
+  <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
+  <style>
+    textarea {
+      font-family: 'Roboto', sans-serif;
+      font-size: 18px;
+    }
+  </style>
+</head>
+<body onload="initialize();">
+<label for="input">Кирил:</label><br/>
+<textarea id="input"
+          rows="10"
+          cols="120"
+          onkeyup="transform(this.value);">
+</textarea>
+<br/>
+<label for="output">Latyn:</label><br/>
+<textarea id="output"
+          rows="10"
+          cols="120">
+</textarea>
+<script type="text/javascript">
+  let initString = 'Алтын күн аспаны\n' +
+      'Алтын дән даласы,\n' +
+      'Ерліктің дастаны,\n' +
+      'Еліме қарашы!\n' +
+      'Ежелден ер деген,\n' +
+      'Даңқымыз шықтығой.\n' +
+      'Намысын бермеген,\n' +
+      'Қазағым мықты ғой!';
+
+  function transform(input) {
+    const original = [
+      'а', 'ә', 'б', 'д', 'е', 'ф', 'г', 'ғ', 'х', 'h',
+      'i', 'и', 'й', 'ж', 'к', 'л', 'м', 'н', 'ң', 'о',
+      'ө', 'п', 'қ', 'р', 'с', 'т', 'ұ', 'ү', 'в',
+      'ы', 'у', 'з', 'ш', 'ч',
+      'А', 'Ә', 'Б', 'Д', 'Е', 'Ф', 'Г', 'Ғ', 'Х',
+      'I', 'И', 'Ж', 'К', 'Л', 'М', 'Н', 'Ң', 'О',
+      'Ө', 'П', 'Қ', 'Р', 'С', 'Т', 'Ұ', 'Ү', 'В',
+      'Ы', 'У', 'З', 'Ш', 'Ч'
+    ];
+    const converted = [
+      'a', 'á', 'b', 'd', 'e', 'f', 'g', 'ǵ', 'h', 'h',
+      'i', 'ı', 'ı', 'j', 'k', 'l', 'm', 'n', 'ń', 'o',
+      'ó', 'p', 'q', 'r', 's', 't', 'u', 'ú', 'v',
+      'y', 'ý', 'z', 'sh', 'ch',
+      'A', 'Á', 'B', 'D', 'E', 'F', 'G', 'Ǵ', 'H',
+      'I', 'I', 'J', 'K', 'L', 'M', 'N', 'Ń', 'O',
+      'Ó', 'P', 'Q', 'R', 'S', 'T', 'U', 'Ú', 'V',
+      'Y', 'Ý', 'Z', 'Sh', 'Ch'
+    ];
+    for (let i = 0; i < original.length; i++) {
+      input = input.replace(new RegExp(original[i], 'g'), converted[i]);
+    }
+    document.getElementById('output').value = input;
+  }
+
+  function initialize() {
+    document.getElementById('input').value = initString;
+    transform(initString);
+  }
+</script>
+</body>
+</html>
