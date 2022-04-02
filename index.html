@@ -2,7 +2,7 @@
 <html lang="kk">
 <head>
   <meta charset="UTF-8">
-  <title>Qazaq Latyn</title>
+  <title>Qazaq Ethiopic</title>
   <link href="https://fonts.googleapis.com/css?family=Roboto" rel="stylesheet">
   <style>
     textarea {
@@ -12,58 +12,140 @@
   </style>
 </head>
 <body onload="initialize();">
-<label for="input">Кирил:</label><br/>
-<textarea id="input"
+<label for="cyr2eth_str">Кирил:</label><br/>
+<textarea id="cyr2eth_str"
           rows="10"
           cols="120"
-          onkeyup="transform(this.value);">
+          onkeyup="cyr2eth(this.value);">
 </textarea>
 <br/>
-<label for="output">Latyn:</label><br/>
-<textarea id="output"
+<label for="eth2cyr_str">ዐጼኦጵ:</label><br/>
+<textarea id="eth2cyr_str"
           rows="10"
-          cols="120">
+          cols="120"
+	  onkeyup="eth2cyr(this.value);">
 </textarea>
 <script type="text/javascript">
-  let initString = 'Алтын күн аспаны,\n' +
-      'Алтын дән даласы,\n' +
-      'Ерліктің дастаны,\n' +
-      'Еліме қарашы!\n' +
-      'Ежелден ер деген,\n' +
-      'Даңқымыз шықты ғой.\n' +
-      'Намысын бермеген,\n' +
-      'Қазағым мықты ғой!';
+  var cyr_syllable = [
+      'ба', 'бо', 'бұ', 'бы',
+      'бе', 'бө', 'бү', 'бі', 'бә', 'ве', 'ву', 'ви',
+      'ға', 'ғо', 'ғұ', 'ғы',
+      'ге', 'гө', 'гү', 'гі', 'гә',
+      'да', 'до', 'дұ', 'ды',
+      'де', 'дө', 'дү', 'ді', 'дә',
+      'жа', 'жо', 'жұ', 'жы',
+      'же', 'жө', 'жү', 'жі', 'жә', 'че', 'чу', 'чи',
+      'за', 'зо', 'зұ', 'зы', 'зе', 'зө', 'зі', 'зү',
+      'йа', 'йо', 'йұ', 'йы', 'йе', 'йө', 'йі', 'йү',
+      'қа', 'қо', 'құ', 'қы', 'ха', 'хо',
+      'ке', 'кө', 'кү', 'кі', 'кә', 'хе', 'ху', 'хи',
+      'ла', 'ло', 'лұ', 'лы',
+      'ле', 'лө', 'лү', 'лі', 'лә',
+      'ма', 'мо', 'мұ', 'мы',
+      'ме', 'мө', 'мү', 'мі', 'мә',
+      'на', 'но', 'нұ', 'ны',
+      'не', 'нө', 'нү', 'ні', 'нә',
+      'ңа', 'ңо', 'ңұ', 'ңы', 'ңе', 'ңө', 'ңі', 'ңү',
+      'па', 'по', 'пұ', 'пы', 'фа', 'фо',
+      'пе', 'пө', 'пү', 'пі', 'пә', 'фе', 'фу', 'фи',
+      'ра', 'ро', 'рұ', 'ры',
+      'ре', 'рө', 'рү', 'рі', 'рә',
+      'са', 'со', 'сұ', 'сы',
+      'се', 'сө', 'сү', 'сі', 'сә',
+      'та', 'то', 'тұ', 'ты', 'ца', 'цо',
+      'те', 'тө', 'тү', 'ті', 'тә', 'це', 'цу', 'ци',
+      'уа', 'уо', 'уұ', 'уы', 'ва', 'во',
+      'уе', 'уө', 'уү', 'уі', 'уә',
+      'ша', 'шо', 'шұ', 'шы', 'ча', 'чо',
+      'ше', 'шө', 'шү', 'ші', 'шә'
+  ];
 
-  function transform(input) {
-    const original = [
-      'а', 'ә', 'б', 'д', 'е', 'ф', 'г', 'ғ', 'х', 'h',
-      'i', 'и', 'й', 'ж', 'к', 'л', 'м', 'н', 'ң', 'о',
-      'ө', 'п', 'қ', 'р', 'с', 'т', 'ұ', 'ү', 'в',
-      'ы', 'у', 'з', 'ш', 'ч',
-      'А', 'Ә', 'Б', 'Д', 'Е', 'Ф', 'Г', 'Ғ', 'Х',
-      'I', 'И', 'Ж', 'К', 'Л', 'М', 'Н', 'Ң', 'О',
-      'Ө', 'П', 'Қ', 'Р', 'С', 'Т', 'Ұ', 'Ү', 'В',
-      'Ы', 'У', 'З', 'Ш', 'Ч'
+  var cyr_single = [
+      'а', 'о', 'ұ', 'ы', 'е', 'ө', 'ү', 'і',
+      'ә', 'б', 'г', 'д', 'ж', 'з', 'й', 'к',
+      'х', 'л', 'м', 'н', 'ң', 'п', 'ф', 'р',
+      'с', 'т', 'ц', 'у', 'в', 'ш', 'ч', 'и'
+  ];
+    
+  var eth_syllable = [
+      'ወ', 'ዎ', 'ዉ', 'ዊ',
+      'በ', 'ቦ', 'ቡ', 'ቢ', 'ብ', 'ባ', 'ቧ', 'ቤ',
+      'ኀ', 'ኆ', 'ኁ', 'ኂ',
+      'ገ', 'ጎ', 'ጉ', 'ጊ', 'ግ',
+      'ጀ', 'ጆ', 'ጁ', 'ጂ',
+      'ደ', 'ዶ', 'ዱ', 'ዲ', 'ድ',
+      'ዠ', 'ዦ', 'ዡ', 'ዢ',
+      'ዘ', 'ዞ', 'ዙ', 'ዚ', 'ዝ', 'ዛ', 'ዟ', 'ዜ',
+      'ረ', 'ሮ', 'ሩ', 'ሪ', 'ራ', 'ሯ', 'ሬ', 'ፘ',
+      'ፈ', 'ፎ', 'ፉ', 'ፊ', 'ፋ', 'ፏ', 'ፌ', 'ፚ',
+      'ቀ', 'ቆ', 'ቁ', 'ቂ', 'ቃ', 'ቋ',
+      'ከ', 'ኮ', 'ኩ', 'ኪ', 'ክ', 'ካ', 'ኳ', 'ኬ',
+      'ኸ', 'ኾ', 'ኹ', 'ኺ',
+      'ለ', 'ሎ', 'ሉ', 'ሊ', 'ል',
+      'ቸ', 'ቾ', 'ቹ', 'ቺ',
+      'ሐ', 'ሖ', 'ሑ', 'ሒ', 'ሕ',
+      'ኘ', 'ኞ', 'ኙ', 'ኚ',
+      'ነ', 'ኖ', 'ኑ', 'ኒ', 'ን',
+      'መ', 'ሞ', 'ሙ', 'ሚ', 'ማ', 'ሟ', 'ሜ', 'ፙ',
+      'ጰ', 'ጶ', 'ጱ', 'ጲ', 'ጳ', 'ጷ',
+      'ጸ', 'ጾ', 'ጹ', 'ጺ', 'ጽ', 'ጻ', 'ጿ', 'ጼ',
+      'ሀ', 'ሆ', 'ሁ', 'ሂ',
+      'የ', 'ዮ', 'ዩ', 'ዪ', 'ይ',
+      'ሸ', 'ሾ', 'ሹ', 'ሺ',
+      'ሰ', 'ሶ', 'ሱ', 'ሲ', 'ስ',
+      'ተ', 'ቶ', 'ቱ', 'ቲ', 'ታ', 'ቷ',
+      'ፐ', 'ፖ', 'ፑ', 'ፒ', 'ፕ', 'ፓ', 'ፗ', 'ፔ',
+      'ጠ', 'ጦ', 'ጡ', 'ጢ', 'ጣ', 'ጧ',
+      'ጨ', 'ጮ', 'ጩ', 'ጪ', 'ጭ',
+      'ሠ', 'ሦ', 'ሡ', 'ሢ', 'ሣ', 'ሧ',
+      'ፀ', 'ፆ', 'ፁ', 'ፂ', 'ፅ'
+  ];
+
+  var eth_single = [
+      'አ', 'ኦ', 'ኡ', 'ኢ', 'ዐ', 'ዖ', 'ዑ', 'ዒ',
+      'ዕ', 'ው', 'ኅ', 'ጅ', 'ዥ', 'ር', 'ፍ', 'ቅ',
+      'ቄ', 'ኽ', 'ች', 'ኝ', 'ም', 'ጵ', 'ጴ', 'ህ',
+      'ሽ', 'ት', 'ቴ', 'ጥ', 'ጤ', 'ሥ', 'ሤ', 'እ'
+  ];
+
+  let initString = 'Эфиоп тілдері — оңтүстік араб тілдері тобымен қоса семит-хамит тілдері шоғырына кіретін Эфиопиядағы семит тілдерінің бір атауы.\n' +
+  'Уикипедия — ашық энциклопедиясынан алынған мәлімет';
+
+    function cyr2eth(cyr2eth_str) {
+    const cyr_extra = [
+    'ғ', 'ё', 'қ', 'һ', 'щ',
+    'ь', 'ъ', 'э', 'ю', 'я'
     ];
-    const converted = [
-      'a', 'á', 'b', 'd', 'e', 'f', 'g', 'ǵ', 'h', 'h',
-      'i', 'ı', 'ı', 'j', 'k', 'l', 'm', 'n', 'ń', 'o',
-      'ó', 'p', 'q', 'r', 's', 't', 'u', 'ú', 'v',
-      'y', 'ý', 'z', 'sh', 'ch',
-      'A', 'Á', 'B', 'D', 'E', 'F', 'G', 'Ǵ', 'H',
-      'I', 'I', 'J', 'K', 'L', 'M', 'N', 'Ń', 'O',
-      'Ó', 'P', 'Q', 'R', 'S', 'T', 'U', 'Ú', 'V',
-      'Y', 'Ý', 'Z', 'Sh', 'Ch'
+    const eth_extra = [
+    'ኅ', 'ፎ', 'ቅ', 'ቄ', 'ሥ',
+    '', '', 'ዐ', 'ፉ', 'ፈ'
     ];
-    for (let i = 0; i < original.length; i++) {
-      input = input.replace(new RegExp(original[i], 'g'), converted[i]);
+    cyr2eth_str = cyr2eth_str.toLowerCase();
+    for (let i = 0; i < cyr_syllable.length; i++) {
+      cyr2eth_str = cyr2eth_str.replace(new RegExp(cyr_syllable[i], 'g'), eth_syllable[i]);
     }
-    document.getElementById('output').value = input;
+    for (let i = 0; i < cyr_single.length; i++) {
+      cyr2eth_str = cyr2eth_str.replace(new RegExp(cyr_single[i], 'g'), eth_single[i]);
+    }
+    for (let i = 0; i < cyr_extra.length; i++) {
+      cyr2eth_str = cyr2eth_str.replace(new RegExp(cyr_extra[i], 'g'), eth_extra[i]);
+    }
+    document.getElementById('eth2cyr_str').value = cyr2eth_str;
+  }
+
+  function eth2cyr(eth2cyr_str) {
+    for (let i = 0; i < eth_single.length; i++) {
+      eth2cyr_str = eth2cyr_str.replace(new RegExp(eth_single[i], 'g'), cyr_single[i]);
+    }
+    for (let i = 0; i < eth_syllable.length; i++) {
+      eth2cyr_str = eth2cyr_str.replace(new RegExp(eth_syllable[i], 'g'), cyr_syllable[i]);
+    }
+    document.getElementById('cyr2eth_str').value = eth2cyr_str;
   }
 
   function initialize() {
-    document.getElementById('input').value = initString;
-    transform(initString);
+    document.getElementById('cyr2eth_str').value = initString;
+    cyr2eth(initString);
   }
 </script>
 </body>
